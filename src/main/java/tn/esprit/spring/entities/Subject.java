@@ -26,8 +26,7 @@ public class Subject {
 
     @ManyToOne
     private Module module;
-    @OneToMany(mappedBy = "matiere")
-    private List<Grade> grades;
+    
   /*
     @OneToMany(mappedBy = "matiere")
     private List<Competence> competences;
