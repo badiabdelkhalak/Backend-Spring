@@ -3,26 +3,28 @@ package tn.esprit.spring.entities;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import org.apache.catalina.User;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
+@ToString
 @Entity
-@Table(name = "presence")
+@Table(name = "Presence")
 public class Presence {
     @Id
-    @Column(name = "id", nullable = false)
-    private Integer id;
-
-    @Column(name = "etat")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idPresence;
     private Boolean etat;
-
-    @Column(name = "date")
     private LocalDate date;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "justification_id")
+    @OneToOne (mappedBy = "presence")
     private Justification justification;
+
+    @ManyToOne
+    private Utilisateur utilisateur;
 
 }

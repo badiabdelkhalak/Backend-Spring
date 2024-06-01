@@ -16,6 +16,7 @@ import java.util.List;
 public class Justification implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idJusutification", nullable = false)
     private Long idJustification;
     private String name;
     private String reason;
@@ -23,10 +24,7 @@ public class Justification implements Serializable {
     private Date submissionDate;
     private Date ValidationDate;
 
-//    @ManyToOne
-//    private Utilisateur utilisateur;
-
-    @OneToMany(mappedBy = "justification")
-    private List<Attendance> attendances;
+    @OneToOne
+    private Presence presence;
 }
 

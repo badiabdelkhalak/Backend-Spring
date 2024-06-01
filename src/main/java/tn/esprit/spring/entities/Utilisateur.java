@@ -1,11 +1,10 @@
 package tn.esprit.spring.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,7 +13,7 @@ import lombok.Setter;
 public class Utilisateur {
     @Id
     @Column(name = "idUtilisateur", nullable = false)
-    private Integer id;
+    private Long id;
 
     @Column(name = "nom")
     private String nom;
@@ -27,5 +26,11 @@ public class Utilisateur {
 
     @Column(name = "motDePasse")
     private String motDePasse;
+
+    @OneToMany (cascade = CascadeType.ALL, mappedBy = "utilisateur")
+    private List<Presence> presences;
+
+    @ManyToOne
+    private Role role;
 
 }

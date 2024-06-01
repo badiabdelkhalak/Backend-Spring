@@ -17,6 +17,5 @@ public class Module {
     private int idModule;
     private String nom;
 
-    @OneToMany(mappedBy = "module")
-    private List<Subject> subjects;
+
 }

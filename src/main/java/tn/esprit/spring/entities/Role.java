@@ -17,4 +17,6 @@ public class Role {
     @Column(name = "permissions")
     private String permissions;
 
+
+
 }
