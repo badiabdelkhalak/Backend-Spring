@@ -1,43 +1,101 @@
-package tn.esprit.spring.services;
+package tn.esprit.spring.services.impl;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import tn.esprit.spring.entities.Note;
+import tn.esprit.spring.entities.Utilisateur;
+import tn.esprit.spring.entities.RoleName;
+import tn.esprit.spring.entities.Matiere;
 import tn.esprit.spring.repositories.NoteRepository;
+import tn.esprit.spring.repositories.UtilisateurRepository;
+import tn.esprit.spring.repositories.MatiereRepository;
+import tn.esprit.spring.services.INoteServices;
+import tn.esprit.spring.utils.ExcelUtils;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
-
-@RequiredArgsConstructor
 @Service
 public class NoteServicesImpl implements INoteServices {
 
-    private final NoteRepository noteRepository;
+    @Autowired
+    private NoteRepository noteRepository;
+
+    @Autowired
+    private UtilisateurRepository utilisateurRepository;
+
+    @Autowired
+    private MatiereRepository matiereRepository;
+
+    private void checkRole(Long userId, RoleName requiredRole) {
+        Optional<Utilisateur> user = utilisateurRepository.findById(userId);
+        if (user.isEmpty() || user.get().getRole().getNom() != requiredRole) {
+            throw new SecurityException("Unauthorized");
+        }
+    }
 
     @Override
-    public List<Note> retrieveAllCourses() {
-        return noteRepository.findAll();
-    }
-    @Override
-    public List<Note> retrieveAllNote() {
-        return noteRepository.findAll();
-    }
+    public Note saveNote(Note note, Long userId) {
+        checkRole(userId, RoleName.ENSEIGNANT);
 
-    @Override
-    public Note addNote(Note note) {
+        // Ensure the Matiere exists
+        Optional<Matiere> matiere = matiereRepository.findById(note.getMatiere().getId());
+        if (matiere.isEmpty()) {
+            throw new IllegalArgumentException("Matiere does not exist");
+        }
+
+        note.setMatiere(matiere.get());
         return noteRepository.save(note);
     }
 
     @Override
-    public Note updateNote(Note note) {
+    public Note updateNote(Note note, Long userId) {
+        checkRole(userId, RoleName.ENSEIGNANT);
+
+        // Ensure the Matiere exists
+        Optional<Matiere> matiere = matiereRepository.findById(note.getMatiere().getId());
+        if (matiere.isEmpty()) {
+            throw new IllegalArgumentException("Matiere does not exist");
+        }
+
+        note.setMatiere(matiere.get());
         return noteRepository.save(note);
     }
 
     @Override
-    public Note retrieveNote(Long numNote) {
-        return noteRepository.findById(numNote)
-                .orElseThrow(() -> new IllegalArgumentException("no course found with this id " + numNote));
+    public void deleteNote(Long id, Long userId) {
+        checkRole(userId, RoleName.ADMIN);
+        noteRepository.deleteById(id);
     }
 
+    @Override
+    public Note getNoteById(Long id, Long userId) {
+        checkRole(userId, RoleName.ETUDIANT);
+        return noteRepository.findById(id).orElse(null);
+    }
 
+    @Override
+    public List<Note> getAllNotes(Long userId) {
+        checkRole(userId, RoleName.ADMIN);
+        return noteRepository.findAll();
+    }
+
+    @Override
+    public void saveNotesFromExcel(MultipartFile file, Long userId) {
+        checkRole(userId, RoleName.ENSEIGNANT);
+        try {
+            List<Note> notes = ExcelUtils.parseExcelFile(file.getInputStream(), utilisateurRepository, matiereRepository);
+            noteRepository.saveAll(notes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public List<Note> getNotesByUserId(Long userId) {
+        checkRole(userId, RoleName.ETUDIANT);
+        return noteRepository.findByUtilisateurId(userId);
+    }
 }

@@ -1,6 +1,7 @@
 package tn.esprit.spring.entities;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,8 +11,14 @@ import lombok.Setter;
 @Table(name = "role")
 public class Role {
     @Id
-    @Column(name = "nomRole", nullable = false)
-    private String nomRole;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
+    @Column(name = "idRole", nullable = false)
+    Long id;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "nom")
+    RoleName nom;
 
     @Lob
     @Column(name = "permissions")

@@ -7,6 +7,6 @@ import tn.esprit.spring.entities.Note;
 import java.util.List;
 
 public interface NoteRepository extends JpaRepository<Note,Long> {
-
+    List<Note> findByUtilisateurId(Long utilisateurId);
 
 }
