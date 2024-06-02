@@ -11,14 +11,9 @@ import lombok.Setter;
 @Table(name = "role")
 public class Role {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
-    @Column(name = "idRole", nullable = false)
-    Long id;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "nom")
-    RoleName nom;
+    @Column(name = "nomRole", nullable = false)
+    private String nomRole;
 
     @Lob
     @Column(name = "permissions")

@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import tn.esprit.spring.entities.Note;
 import tn.esprit.spring.entities.Utilisateur;
-import tn.esprit.spring.entities.RoleName;
 import tn.esprit.spring.entities.Matiere;
 import tn.esprit.spring.repositories.NoteRepository;
 import tn.esprit.spring.repositories.UtilisateurRepository;
@@ -29,16 +28,16 @@ public class NoteServicesImpl implements INoteServices {
     @Autowired
     private MatiereRepository matiereRepository;
 
-    private void checkRole(Long userId, RoleName requiredRole) {
+    private void checkRole(Long userId, String requiredRole) {
         Optional<Utilisateur> user = utilisateurRepository.findById(userId);
-        if (user.isEmpty() || user.get().getRole().getNom() != requiredRole) {
+        if (user.isEmpty() || !user.get().getRole().getNomRole().equals(requiredRole)) {
             throw new SecurityException("Unauthorized");
         }
     }
 
     @Override
     public Note saveNote(Note note, Long userId) {
-        checkRole(userId, RoleName.ENSEIGNANT);
+        checkRole(userId, "enseignant");
 
         // Ensure the Matiere exists
         Optional<Matiere> matiere = matiereRepository.findById(note.getMatiere().getId());
@@ -52,7 +51,7 @@ public class NoteServicesImpl implements INoteServices {
 
     @Override
     public Note updateNote(Note note, Long userId) {
-        checkRole(userId, RoleName.ENSEIGNANT);
+        checkRole(userId, "enseignant");
 
         // Ensure the Matiere exists
         Optional<Matiere> matiere = matiereRepository.findById(note.getMatiere().getId());
@@ -66,25 +65,25 @@ public class NoteServicesImpl implements INoteServices {
 
     @Override
     public void deleteNote(Long id, Long userId) {
-        checkRole(userId, RoleName.ADMIN);
+        checkRole(userId, "admin");
         noteRepository.deleteById(id);
     }
 
     @Override
     public Note getNoteById(Long id, Long userId) {
-        checkRole(userId, RoleName.ETUDIANT);
+        checkRole(userId, "etudiant");
         return noteRepository.findById(id).orElse(null);
     }
 
     @Override
     public List<Note> getAllNotes(Long userId) {
-        checkRole(userId, RoleName.ADMIN);
+        checkRole(userId, "admin");
         return noteRepository.findAll();
     }
 
     @Override
     public void saveNotesFromExcel(MultipartFile file, Long userId) {
-        checkRole(userId, RoleName.ENSEIGNANT);
+        checkRole(userId, "enseignant");
         try {
             List<Note> notes = ExcelUtils.parseExcelFile(file.getInputStream(), utilisateurRepository, matiereRepository);
             noteRepository.saveAll(notes);
@@ -95,7 +94,7 @@ public class NoteServicesImpl implements INoteServices {
 
     @Override
     public List<Note> getNotesByUserId(Long userId) {
-        checkRole(userId, RoleName.ETUDIANT);
+        checkRole(userId, "etudiant");
         return noteRepository.findByUtilisateurId(userId);
     }
 }
