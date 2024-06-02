@@ -2,21 +2,26 @@ package tn.esprit.spring.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-
+import lombok.experimental.FieldDefaults;
 import java.util.List;
 
-@Entity
 @Getter
 @Setter
-@ToString
-@AllArgsConstructor
+@Entity
+@Table(name = "module")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
+@AllArgsConstructor
 public class Module {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idModule;
-    private String nom;
+    @Setter(AccessLevel.NONE)
+    @Column(name = "idModule", nullable = false)
+    Long id;
+
+    @Column(name = "nom")
+    String nom;
 
     @OneToMany(mappedBy = "module")
-    private List<Matiere> matieres;
+    List<Matiere> matieres;
 }

@@ -1,35 +1,40 @@
 package tn.esprit.spring.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "note")
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@NoArgsConstructor
+@AllArgsConstructor
 public class Note {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     @Column(name = "idNote", nullable = false)
-    private Integer id;
+    Long id;
 
     @Column(name = "noteCc")
-    private Double noteCc;
+    Double noteCc;
 
     @Column(name = "noteTp")
-    private Double noteTp;
+    Double noteTp;
 
     @Column(name = "noteEx")
-    private Double noteEx;
+    Double noteEx;
 
     @Column(name = "classe")
-    private String classe;
+    String classe;
 
-    @Column(name = "etudiant")
-    private String etudiant;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "utilisateur_id")
+    Utilisateur utilisateur;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "matiere_id")
-    private Matiere matiere;
-
+    Matiere matiere;
 }
