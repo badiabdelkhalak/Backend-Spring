@@ -18,5 +18,5 @@ public class Module {
     private String nom;
 
     @OneToMany(mappedBy = "module")
-    private List<Subject> subjects;
+    private List<Matiere> matieres;
 }
