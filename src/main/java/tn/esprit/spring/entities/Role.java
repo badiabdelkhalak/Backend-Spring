@@ -1,6 +1,7 @@
 package tn.esprit.spring.entities;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,6 +11,7 @@ import lombok.Setter;
 @Table(name = "role")
 public class Role {
     @Id
+    @Setter(AccessLevel.NONE)
     @Column(name = "nomRole", nullable = false)
     private String nomRole;
 

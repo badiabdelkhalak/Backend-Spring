@@ -26,7 +26,7 @@ public class Justification implements Serializable {
 //    @ManyToOne
 //    private Utilisateur utilisateur;
 
-    @OneToMany(mappedBy = "justification")
-    private List<Presence> presences;
+  /*  @OneToMany(mappedBy = "justification")
+    private List<Attendance> attendances;*/
 }
 
