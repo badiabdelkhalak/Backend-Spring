@@ -1,7 +1,8 @@
 package tn.esprit.spring.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import tn.esprit.spring.entities.Competence;
+import tn.esprit.spring.entities.Classe;
 
-public interface ClasseRepository extends JpaRepository<Class, Long> {
+
+public interface ClasseRepository extends JpaRepository<Classe, Long> {
 }
